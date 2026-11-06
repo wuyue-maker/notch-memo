@@ -28,7 +28,7 @@ macOS 14+（Apple Silicon）· Swift 6 · SwiftUI + AppKit + Metal · 无第三�
 
 ## 安装
 
-1. 到 [Releases](../../releases) 下载 `刘海便签-0.1.29.dmg`。
+1. 到 [Releases](../../releases) 下载 `NotchMemo-0.1.29.dmg`。
 2. 双击打开，把「刘海便签」拖进「应用程序」文件夹。
 3. 首次打开：在「应用程序」里**右键**点「刘海便签」→「打开」，在系统提示中再点一次「打开」。
 

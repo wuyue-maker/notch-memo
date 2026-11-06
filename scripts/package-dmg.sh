@@ -16,7 +16,7 @@ if [[ ! -f "$guide" ]]; then
 fi
 
 version=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$app/Contents/Info.plist")
-dmg="dist/刘海便签-$version.dmg"
+dmg="dist/NotchMemo-$version.dmg"
 stage=$(mktemp -d "${TMPDIR:-/tmp}/notchmemo-dmg.XXXXXX")
 trap 'rm -rf "$stage"' EXIT
 

@@ -49,7 +49,7 @@ git remote add origin https://github.com/wuyue-maker/notch-memo.git
 1. GitHub 仓库 → Releases → Draft a new release。
 2. Tag：`v0.1.29`；标题：`刘海便签 0.1.29`。
 3. 说明直接粘贴 [docs/发布说明-0.1.29.md](docs/发布说明-0.1.29.md) 的内容。
-4. 上传附件：`dist/刘海便签-0.1.29.dmg`。
+4. 上传附件：`dist/NotchMemo-0.1.29.dmg`。
 5. 发布。
 
 README 里的 `Releases` 链接会指向本仓库的 Releases 页面，下载文件名与安装说明一致。

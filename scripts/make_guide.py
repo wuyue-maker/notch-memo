@@ -146,7 +146,7 @@ def main():
               size=10.5, color=MUTED, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=8)
 
     heading(doc, "安装", "1")
-    bullet(doc, "双击打开安装包 刘海便签-0.1.29.dmg。")
+    bullet(doc, "双击打开安装包 NotchMemo-0.1.29.dmg。")
     bullet(doc, "把「刘海便签」拖进「应用程序」文件夹，然后推出磁盘映像。")
 
     heading(doc, "首次打开", "2")
