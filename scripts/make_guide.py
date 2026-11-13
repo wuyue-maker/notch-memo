@@ -139,14 +139,14 @@ def main():
     sub = doc.add_paragraph()
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     sub.paragraph_format.space_after = Pt(10)
-    style_run(sub.add_run("安装与使用  ·  0.1.29"), 10, MUTED)
+    style_run(sub.add_run("安装与使用  ·  0.1.30"), 10, MUTED)
 
     paragraph(doc, "一个驻留在 MacBook 刘海里的任务便签：平时完全隐藏，鼠标靠近屏幕顶部即刻展开；"
                    "记任务、勾完成、拖排序，全部完成后纸面揉成纸团归档。",
               size=10.5, color=MUTED, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=8)
 
     heading(doc, "安装", "1")
-    bullet(doc, "双击打开安装包 NotchMemo-0.1.29.dmg。")
+    bullet(doc, "双击打开安装包 NotchMemo-0.1.30.dmg。")
     bullet(doc, "把「刘海便签」拖进「应用程序」文件夹，然后推出磁盘映像。")
 
     heading(doc, "首次打开", "2")
@@ -168,7 +168,15 @@ def main():
     bullet(doc, "菜单栏「我的便签」可以切换进行中的便签、查看已归档便签。")
 
     doc.add_page_break()
-    heading(doc, "快捷键", "4")
+    heading(doc, "开机自动启动", "4")
+    bullet(doc, "菜单栏清单图标 →「开机自动启动」，勾选后登录时自动打开刘海便签；"
+                "取消勾选即恢复手动启动。")
+    bullet(doc, "请先把「刘海便签」拖进「应用程序」再开启。从磁盘映像直接运行、"
+                "或系统临时隔离副本时，菜单会提示不可用。")
+    bullet(doc, "若菜单项显示为横杠并提示等待允许，到「系统设置 → 通用 → 登录项与扩展」"
+                "打开刘海便签即可。")
+
+    heading(doc, "快捷键", "5")
     table = doc.add_table(rows=1, cols=2)
     table.style = "Table Grid"
     table.alignment = WD_TABLE_ALIGNMENT.LEFT
@@ -186,22 +194,22 @@ def main():
             cell.text = ""
             style_run(cell.paragraphs[0].add_run(text), 10, INK)
 
-    heading(doc, "数据与备份", "5")
+    heading(doc, "数据与备份", "6")
     bullet(doc, "任务只保存在本机，不需要登录，也不会上传网络：")
     mono(doc, "~/Library/Application Support/NotchMemo/tasks.json")
     bullet(doc, "菜单栏 →「打开数据文件夹」可以直接查看；每次保存都会保留上一版 "
                 "tasks.backup.json。")
 
-    heading(doc, "卸载", "6")
+    heading(doc, "卸载", "7")
     bullet(doc, "从菜单栏退出便签，删除「应用程序」里的刘海便签即可。")
     bullet(doc, "如果还要清空任务，删除上面提到的 NotchMemo 数据文件夹。")
 
-    heading(doc, "系统要求与已知限制", "7")
+    heading(doc, "系统要求与已知限制", "8")
     bullet(doc, "需要 macOS 14 或更高版本（Apple Silicon / arm64）；为带刘海的 MacBook 设计，"
                 "无刘海屏幕上热区位于屏幕顶部中央。")
     bullet(doc, "全屏应用和多个 Spaces 下都能唤出；合盖或只接外接屏时使用主屏幕。")
     bullet(doc, "遵循系统「减少动态效果」；纸面固定浅色以保持纸张质感。")
-    bullet(doc, "当前为本机临时签名版本，未做 Apple 公证；暂不含开机自启动和 iCloud 同步。")
+    bullet(doc, "当前为本机临时签名版本，未做 Apple 公证；暂不含 iCloud 同步。")
 
     paragraph(doc, "更完整的说明见项目仓库的 docs/ 目录（产品方案、使用说明、验证记录）。",
               size=9, color=MUTED, space_before=10)

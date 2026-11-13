@@ -23,9 +23,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var notesMenu: NSMenu!
     private var visibilityItem: NSMenuItem!
     private var newNoteItems: [NSMenuItem] = []
+    private var launchAtLogin: LaunchAtLoginService!
+    private var launchAtLoginItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let args = ProcessInfo.processInfo.arguments
+        launchAtLogin = LaunchAtLoginService()
+        if let index = args.firstIndex(of: "--launch-at-login") {
+            // Verification hook: apply the change, report it, then quit so a
+            // script can read the result without leaving a second app running.
+            print(launchAtLogin.commandOutput(args.indices.contains(index + 1) ? args[index + 1] : "status"))
+            exit(0)
+        }
         let directory: URL
         if let configured = Bundle.main.object(forInfoDictionaryKey: "NotchMemoDataDirectory") as? String {
             directory = URL(fileURLWithPath: configured, isDirectory: true)
@@ -40,7 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         PaperCrumpleWarmup.prepare()
         configureMainMenu()
         configureMenu()
-        if args.contains("--diagnostics") { print(controller.diagnostics()) }
+        if args.contains("--diagnostics") { print(runInformation()) }
         if args.contains("--preview") || Bundle.main.object(forInfoDictionaryKey: "NotchMemoVerificationMode") as? Bool == true {
             controller.show(fromMenu: true, pin: true)
         }
@@ -95,6 +104,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         notesItem.submenu = notesMenu
         menu.addItem(notesItem)
         menu.addItem(.separator())
+        launchAtLoginItem = addItem(LaunchAtLoginService.title, action: #selector(toggleLaunchAtLogin), to: menu)
+        menu.addItem(.separator())
         addItem("关于刘海便签", action: #selector(about), to: menu)
         addItem("打开数据文件夹", action: #selector(openData), to: menu)
         addItem("复制运行信息", action: #selector(copyDiagnostics), to: menu)
@@ -122,6 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         pinItem?.state = model.isPinned ? .on : .off
         visibilityItem?.title = model.isPresented ? "收起便签" : "展开便签"
         newNoteItems.forEach { $0.isEnabled = !model.storageBlocked }
+        launchAtLoginItem?.state = launchAtLogin.menuState
         guard menu.title == "我的便签" else { return }
         menu.autoenablesItems = false
         menu.removeAllItems()
@@ -170,6 +182,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if model.isPinned { model.isPinned = false }
         else { controller.show(fromMenu: true, pin: true) }
     }
+
+    @objc private func toggleLaunchAtLogin() {
+        // A mixed mark means "registered, waiting for approval"; asking again
+        // re-requests it and takes the user where they can allow it.
+        let outcome = launchAtLogin.setEnabled(!launchAtLogin.isEnabled)
+        if case .pendingApproval = outcome { openLoginItemsSettings() }
+        guard let message = LaunchAtLoginService.message(for: outcome) else { return }
+        model.banner = message
+        controller.show(fromMenu: true)
+    }
+
+    private func openLoginItemsSettings() {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension") else { return }
+        NSWorkspace.shared.open(url)
+    }
+
     @objc private func about() {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "开发版"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-"
@@ -191,7 +219,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     @objc private func copyDiagnostics() {
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(controller.diagnostics(), forType: .string)
+        NSPasteboard.general.setString(runInformation(), forType: .string)
+    }
+
+    /// Panel geometry plus the login item, for「复制运行信息」and `--diagnostics`.
+    private func runInformation() -> String {
+        controller.diagnostics() + "\n" + launchAtLogin.summary
     }
     @objc private func quit() { NSApp.terminate(nil) }
 
